@@ -1,0 +1,46 @@
+name: Playwright Tests
+
+# Run automatically:
+# - every time code is pushed to main
+# - every time a pull request is opened/updated targeting main
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: pull the repo's code onto the runner
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: set up Node.js (needed to run npm/Playwright)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Step 3: install project dependencies (@playwright/test etc.)
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: run the actual test suite
+      # GitHub's ubuntu-latest runners already have Google Chrome
+      # pre-installed, so playwright.config.js's channel: 'chrome'
+      # setting works here with no extra browser download needed.
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      # Step 5: always upload the HTML report, pass or fail,
+      # so a failure can be inspected after the fact.
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
