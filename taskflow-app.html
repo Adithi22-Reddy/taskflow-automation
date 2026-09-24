@@ -101,8 +101,8 @@ function addTask(){
     showMsg('Task title is required', 'err');
     return;
   }
-  if(trimmedTitle.length > 5){
-    showMsg('Task title must be 5 characters or fewer', 'err');
+  if(trimmedTitle.length > 100){
+    showMsg('Task title must be 100 characters or fewer', 'err');
     return;
   }
   if(!dueDate){
